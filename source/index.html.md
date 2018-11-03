@@ -1,239 +1,76 @@
 ---
-title: API Reference
-
-language_tabs: # must be one of https://git.io/vQNgJ
-  - shell
-  - ruby
-  - python
-  - javascript
+title: MeTS Java Coding Standards
 
 toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
-  - <a href='https://github.com/lord/slate'>Documentation Powered by Slate</a>
-
-includes:
-  - errors
+  - <a href='https://github.bamtech.co/kfuhrman/coding-standards'>View on Github!</a>
+  - <a href='https://github.com/lord/slate'>Powered by Slate</a>
 
 search: true
 ---
 
-# Introduction
+# MeTS Java Coding Standards
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+Test content
 
-We have language bindings in Shell, Ruby, Python, and JavaScript! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
+TODO:// fill with content
 
-This example API documentation page was created with [Slate](https://github.com/lord/slate). Feel free to edit it and use it as a base for your own API's documentation.
+# Formatting
 
-# Authentication
+## Imports
 
-> To authorize, use this code:
+> Example Imports
 
-```ruby
-require 'kittn'
+```java
+import com.bamtech.mm.mets.sfc.type.exception.FatalException;
+import com.bamtech.mm.mets.sfc.type.type.ExecutionContext;
+import com.dss.mm.mets.sfc.base.lambda.BaseLambda;
+import com.dss.mm.vpo.type.v2.packaging.BaseMediaData;
+import com.dss.mm.vpo.type.v2.preset.Preset;
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 ```
 
-```python
-import kittn
+In order to clearly see imports, they should be listed alphabetically with a newline between each base package name.
 
-api = kittn.authorize('meowmeowmeow')
-```
+We should avoid wildcard imports, as they not only clutter the classpath but they can also cause confusion when reading code.
 
-```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
-```
+Static imports should also be avoided in production code, as they can also obfuscate code making it harder to determine where the implementation is located.
 
-```javascript
-const kittn = require('kittn');
+# Prefer Immutability
 
-let api = kittn.authorize('meowmeowmeow');
-```
+When things objects are immutable, it is typically easier to reason about concurrency and expected behavior. While there may be some overhead to keeping things immutable, the benefits while writing and debugging code far out weigh them.
 
-> Make sure to replace `meowmeowmeow` with your API key.
+## Final
 
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
+Wherever possible fields should be declared as final to show clear design and intent. Fields which are not final should be assumed to be mutable and potentially uninitialized.
 
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
+Methods and Classes should not be final with good reason, as it limits extensibility.
 
-`Authorization: meowmeowmeow`
+## Immutable classes
 
-<aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
-</aside>
+```java
 
-# Kittens
+public TestClass {
 
-## Get All Kittens
+	private final String data;
 
-```ruby
-require 'kittn'
+	public TestClass( final String data ) {
+		this.data;
+	}
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
-```
+	public getData() {
+		return data;
+	}
 
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
-
-```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let kittens = api.kittens.get();
-```
-
-> The above command returns JSON structured like this:
-
-```json
-[
-  {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
-  {
-    "id": 2,
-    "name": "Max",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
-  }
-]
-```
-
-This endpoint retrieves all kittens.
-
-### HTTP Request
-
-`GET http://example.com/api/kittens`
-
-### Query Parameters
-
-Parameter | Default | Description
---------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
-
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
-
-## Get a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```shell
-curl "http://example.com/api/kittens/2"
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.get(2);
-```
-
-> The above command returns JSON structured like this:
-
-```json
-{
-  "id": 2,
-  "name": "Max",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
 }
+
 ```
 
-This endpoint retrieves a specific kitten.
-
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
-
-### HTTP Request
-
-`GET http://example.com/kittens/<ID>`
-
-### URL Parameters
-
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to retrieve
-
-## Delete a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.delete(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.delete(2)
-```
-
-```shell
-curl "http://example.com/api/kittens/2"
-  -X DELETE
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.delete(2);
-```
-
-> The above command returns JSON structured like this:
-
-```json
-{
-  "id": 2,
-  "deleted" : ":("
-}
-```
-
-This endpoint deletes a specific kitten.
-
-### HTTP Request
-
-`DELETE http://example.com/kittens/<ID>`
-
-### URL Parameters
-
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to delete
+While not always possible, it's ideal for classes to be immutable. Immutable classes tend to make design easier to understand by clearly showing intent, as well as making concurreny easier to reason about.
 
